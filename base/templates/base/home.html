@@ -7,7 +7,7 @@
         {%for room in rooms%}
         <small>@{{room.host.username}}</small>
         <h3>{{room.id}} -- <a href="/room/{{room.id}}">{{room.name}}</a></h3>
-        <small>{{room.topic}}</small>
+        <p>{{room.topic}}</p>
         <hr>
         {%endfor%}
     </div>
