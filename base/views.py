@@ -66,25 +66,26 @@ def registerPage(request):
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-
+    
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
         Q(description__icontains=q) |
-        Q(name__icontains=q) 
-        
+        Q(name__icontains=q)  
         )
     
     topics = Topic.objects.all()
     room_count = rooms.count()
+    room_messages = Message.objects.all()
 
-    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count}
+    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count, 'room_messages': room_messages}
     return render(request, 'base/home.html', context)
 
 
 
 def room(request, room_id):
     room = Room.objects.get(id=room_id)
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all()
+    participants = room.participants.all()
 
     if request.method == "POST":
         message = Message.objects.create(
@@ -92,9 +93,10 @@ def room(request, room_id):
             room=room,
             body=request.POST.get('body')
         )
-        return redirect('room', pk=room.id)
+        room.participants.add(request.user)
+        return redirect('room', room_id=room.id)
 
-    context = {'room': room, 'room_messages': room_messages}
+    context = {'room': room, 'room_messages': room_messages, 'participants': participants}
     return render(request, 'base/room.html', context)
 
 
