@@ -208,3 +208,11 @@ def topicsPage(request):
     if len(topics) == 0: no_results = True
     context = {'topics': topics, 'room_count': all_rooms_count, 'no_results': no_results, 'q': q}
     return render(request, 'base/topics.html', context)
+
+
+
+def activitiesPage(request):
+    room_messages = Message.objects.all()
+    context = {'room_messages': room_messages}
+
+    return render(request, 'base/activity.html', context)
